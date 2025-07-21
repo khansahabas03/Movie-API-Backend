@@ -1,24 +1,22 @@
-# Use an official Maven image with JDK 17
+# ---- Build Stage ----
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy the project files
-COPY movies/pom.xml .
-COPY movies/src ./src
+# Copy only what's needed to build
+COPY pom.xml .
+COPY src ./src
 
-# Package the application
+# Build the project (skip tests)
 RUN mvn clean package -DskipTests
 
-# ---- Create a lightweight image for runtime ----
+# ---- Runtime Stage ----
 FROM eclipse-temurin:17-jdk
 
-# Set working directory
 WORKDIR /app
 
-# Copy only the jar from the builder stage
-COPY --from=build /app/target/ems-backend-0.0.1-SNAPSHOT.jar app.jar
+# Copy JAR from the build stage
+COPY --from=build /app/target/*.jar app.jar
 
-# Run the app
+# Run the JAR
 CMD ["java", "-jar", "app.jar"]
