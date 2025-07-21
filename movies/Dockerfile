@@ -1,14 +1,24 @@
-# Use a lightweight Java runtime
-FROM eclipse-temurin:17-jdk-alpine
+# Use an official Maven image with JDK 17
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy project files into the container
-COPY . .
+# Copy the project files
+COPY movies/pom.xml .
+COPY movies/src ./src
 
-# Package the application (you must have mvnw and pom.xml)
-RUN ./mvnw clean package -DskipTests
+# Package the application
+RUN mvn clean package -DskipTests
 
-# Run the built JAR file
-CMD ["java", "-jar", "target/ems-backend-0.0.1-SNAPSHOT.jar"]
+# ---- Create a lightweight image for runtime ----
+FROM eclipse-temurin:17-jdk
+
+# Set working directory
+WORKDIR /app
+
+# Copy only the jar from the builder stage
+COPY --from=build /app/target/ems-backend-0.0.1-SNAPSHOT.jar app.jar
+
+# Run the app
+CMD ["java", "-jar", "app.jar"]
