@@ -14,8 +14,8 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "https://movie-api-h975.onrender.com" // frontend URL
-//                                "http://localhost:5173"               // optional: for local dev
+                                "https://movie-api-h975.onrender.com" , // frontend URL
+                                "http://localhost:5173"              // for local dev
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
