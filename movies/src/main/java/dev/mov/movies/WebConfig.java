@@ -1,4 +1,4 @@
-package dev.mov.movies.config;
+package dev.mov.movies;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
